@@ -2,7 +2,7 @@
 import {analyze} from './stats.js';
 import {np,DAY,MSG} from './format.js';
 import {buildSlides} from './render.js';
-import {slideBlob,saveBlob,shareAlbum,shareSheet,reportText,copyText,buildLink,readLink,tgShareUrl,TG_LIMIT} from './share.js';
+import {slideBlob,saveBlob,prepareAlbum,prepareSheet,sendFiles,reportText,copyText,buildLink,readLink,tgShareUrl,TG_LIMIT} from './share.js';
 
 const $=s=>document.querySelector(s);
 let DATA=null,S=null,SLIDES=[],i=0;
@@ -85,7 +85,15 @@ $('#applyNames').onclick=()=>{
 
 // шит
 const sheet=on=>{$('#sheet').classList.toggle('on',on);$('#scrim').classList.toggle('on',on)};
-$('#send').onclick=()=>sheet(true);
+$('#send').onclick=()=>{
+  if(!READY)return sheet(true);
+  const files=READY;
+  // строго внутри обработчика клика — иначе браузер отклонит отправку
+  sendFiles(files).then(how=>{
+    say(how==='share'?'Отправлено':`${files.length>1?files.length+' файлов':'Картинка'} в загрузках — прикрепите ${files.length>1?'их':'её'} в чат`);
+    resetSend();
+  }).catch(e=>{if(e.name!=='AbortError')say(e.message,true)});
+};
 $('#sheetClose').onclick=()=>sheet(false);
 $('#scrim').onclick=()=>sheet(false);
 
@@ -110,12 +118,28 @@ const busy=async fn=>{
 };
 $('#png').onclick=()=>busy(()=>withExportScope(async mount=>{
   saveBlob(await slideBlob(i+1,mount),`wrapped_${i+1}.png`);say('Карточка в загрузках')}));
+// Картинки рисуются секундами, а navigator.share требует свежего клика:
+// поэтому сначала готовим файлы, а отправляем отдельной кнопкой.
+let READY=null;
+function offerSend(files,label){
+  READY=files;
+  const btn=$('#send');
+  btn.dataset.mode='ready';
+  btn.innerHTML=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg> ${label}`;
+  say('Готово — нажмите «' + label + '»');
+}
+function resetSend(){
+  READY=null;
+  const btn=$('#send');
+  btn.dataset.mode='';
+  btn.innerHTML=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg> Отправить в Telegram`;
+}
 $('#optAlbum').onclick=()=>busy(async()=>{sheet(false);say(`Рисую ${SLIDES.length} карточек, это около 20 секунд…`);
-  const how=await withExportScope(mount=>shareAlbum(step,SLIDES.length,mount));
-  say(how==='share'?'Отправлено':`${SLIDES.length} файлов в загрузках — прикрепите их в чат`)});
+  const files=await withExportScope(mount=>prepareAlbum(step,SLIDES.length,mount));
+  offerSend(files,`Отправить ${files.length} карточек`)});
 $('#optSheet').onclick=()=>busy(async()=>{sheet(false);say('Собираю картинку из всех карточек, это около 20 секунд…');
-  const how=await withExportScope(mount=>shareSheet(step,SLIDES.length,mount));
-  say(how==='share'?'Отправлено':'Картинка в загрузках — прикрепите её в чат')});
+  const files=await withExportScope(mount=>prepareSheet(step,SLIDES.length,mount));
+  offerSend(files,'Отправить картинку')});
 $('#optText').onclick=()=>busy(async()=>{sheet(false);
   say(await copyText(reportText(S))?'Текст в буфере — вставьте в чат':'Буфер недоступен, выделите текст вручную')});
 $('#optLink').onclick=()=>busy(async()=>{sheet(false);

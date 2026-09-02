@@ -48,26 +48,33 @@ export async function slideBlob(i,prepare){const c=await slideCanvas(i,prepare);
 export function saveBlob(b,name){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000)}
 
 // Альбом: восемь файлов одним шерингом. Telegram принимает их альбомом.
-export async function shareAlbum(step,n=count(),prepare){
+export async function prepareAlbum(step,n=count(),prepare){
   const files=[];
   for(let i=1;i<=n;i++){step?.(i,n);files.push(new File([await slideBlob(i,prepare)],`wrapped_${i}.png`,{type:'image/png'}))}
-  if(navigator.canShare?.({files})){await navigator.share({files,title:'Telegram Wrapped',text:`Наша переписка в цифрах — свой отчёт: ${SITE}`,url:SITE});return 'share'}
-  for(const f of files)saveBlob(f,f.name);
-  return 'save';
+  return files;
 }
-
-// Лист: все восемь карточек одной картинкой — целиком видно в чате, ничего не листать.
-export async function shareSheet(step,n=count(),prepare){
+export async function prepareSheet(step,n=count(),prepare){
   const k=sheetScale(n);
   const w=Math.round(W*k),h=Math.round(H*k),rows=Math.ceil(n/COLS);
   const c=document.createElement('canvas');c.width=w*COLS;c.height=h*rows;
   const ctx=c.getContext('2d');
   for(let i=1;i<=n;i++){step?.(i,n);const s=await slideCanvas(i,prepare);ctx.drawImage(s,(i-1)%COLS*w,Math.floor((i-1)/COLS)*h,w,h);s.width=s.height=0}
   const b=await toBlob(c);c.width=c.height=0;
-  const f=new File([b],'wrapped.png',{type:'image/png'});
-  if(navigator.canShare?.({files:[f]})){await navigator.share({files:[f],title:'Telegram Wrapped',text:`Наша переписка в цифрах — свой отчёт: ${SITE}`,url:SITE});return 'share'}
-  saveBlob(b,'wrapped.png');return 'save';
+  return [new File([b],'wrapped.png',{type:'image/png'})];
 }
+
+// Вызывать строго из обработчика клика: иначе браузер откажет —
+// «Must be handling a user gesture to perform a share request».
+export async function sendFiles(files){
+  if(mobileNow()&&navigator.canShare?.({files})){
+    await navigator.share({files,title:'Telegram Wrapped',
+      text:`Наша переписка в цифрах — свой отчёт: ${SITE}`});
+    return 'share';
+  }
+  for(const f of files)saveBlob(f,f.name);
+  return 'save';
+}
+
 
 // Текстовый отчёт: читается без картинок, цитируется в чате.
 export function reportText(S){
@@ -104,9 +111,10 @@ const b64=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode
 const unb64=s=>{const t=atob(s.replace(/-/g,'+').replace(/_/g,'/'));const u=new Uint8Array(t.length);for(let i=0;i<t.length;i++)u[i]=t.charCodeAt(i);return u};
 const pipe=async(u8,s)=>new Uint8Array(await new Response(new Blob([u8]).stream().pipeThrough(s)).arrayBuffer());
 
-// В ссылку кладём только то, что рисуют карточки: t.me/share/url отвечает 400
-// на слишком длинный адрес, а половину слепка (помесячные ряды, разбивки по годам)
-// карточки не открывают вовсе.
+// В ссылку кладём только то, что рисуют карточки, и в самом плотном виде:
+// адрес со статистикой внутри читают люди в чате, а простыня на две тысячи знаков
+// выглядит как мусор. Ключи объектов выкидываем (порядок полей задан схемой),
+// пары «А и М» пишем двухэлементным массивом, списки режем до показываемого.
 const KEEP=['names','total','days','active_days','first','last','per_user','words','vocab',
  'calls','resp_median','resp_p90','unanswered','pingpong','night','weekend','hours',
  'first_hour','last_hour','deep_night','wd','wd_top','kw','edited','voice','voice_secs',
@@ -114,35 +122,75 @@ const KEEP=['names','total','days','active_days','first','last','per_user','word
  'emoji','reactions','stickers','starts','ends','double','answered','sessions','sess_median',
  'longest_session','streak','pauses','top_days','month_top','month_low','day_first','day_last',
  'first_msg','last_msg','long_msgs'];
-const CUT={top_words:8,signature:6,domains:6,reactions:4,pauses:1,top_days:1};
+// поля вида {A,M} — их пишем как [A,M]
+const PAIRS=new Set(['per_user','words','vocab','resp_median','resp_p90','unanswered','night',
+ 'weekend','first_hour','last_hour','edited','voice','voice_secs','quotes','replies','reactions_by',
+ 'max_monologue','starts','ends','double','answered','day_first','day_last','long_msgs',
+ 'signature','top_words','emoji','names']);
+const KW_KEYS=['sorry','thanks','laugh','swear','money','deadline','bug','ai','call','promise','tired','me','we','ok','love'];
+
 export function slim(S){
-  const out={};
-  for(const k of KEEP){
-    if(!(k in S))continue;
-    let v=S[k];
-    if(CUT[k]&&Array.isArray(v))v=v.slice(0,CUT[k]);
-    else if(CUT[k]&&v&&typeof v==='object')v=Object.fromEntries(Object.entries(v).map(([kk,vv])=>[kk,Array.isArray(vv)?vv.slice(0,CUT[k]):vv]));
-    out[k]=v;
-  }
-  if(out.emoji)out.emoji={A:(out.emoji.A||[]).slice(0,3),M:(out.emoji.M||[]).slice(0,3)};
-  return out;
+  const cut=(a,n)=>Array.isArray(a)?a.slice(0,n):a;
+  const o={};
+  for(const k of KEEP)if(k in S)o[k]=S[k];
+  o.signature={A:cut(S.signature?.A,4),M:cut(S.signature?.M,4)};
+  o.top_words={A:cut(S.top_words?.A,5).map(w=>w[0]),M:cut(S.top_words?.M,5).map(w=>w[0])};
+  o.domains=cut(S.domains,4);
+  o.emoji={A:cut(S.emoji?.A,2),M:cut(S.emoji?.M,2)};
+  o.reactions=cut(S.reactions,3);
+  o.stickers={...S.stickers,top:cut(S.stickers?.top,3)};
+  o.pauses=cut(S.pauses,1);o.top_days=cut(S.top_days,1);
+  const mx=Math.max(...(S.hours||[1]),1);
+  o.hours=(S.hours||[]).map(v=>Math.round(v/mx*99));      // гистограмме нужна форма, не абсолютные числа
+  o.first_msg={...S.first_msg,text:(S.first_msg?.text||'').slice(0,90)};
+  o.last_msg={...S.last_msg,text:(S.last_msg?.text||'').slice(0,90)};
+  return o;
 }
+const pack=S=>{const s=slim(S);
+  return KEEP.map(k=>{const v=s[k];
+    if(k==='kw')return KW_KEYS.map(n=>[v?.[n]?.A??0,v?.[n]?.M??0]);
+    if(PAIRS.has(k))return [v?.A,v?.M];
+    return v??null})};
+const unpack=arr=>{const o={};
+  KEEP.forEach((k,i)=>{const v=arr[i];
+    if(k==='kw'){o.kw={};KW_KEYS.forEach((n,j)=>o.kw[n]={A:v?.[j]?.[0]??0,M:v?.[j]?.[1]??0})}
+    else if(PAIRS.has(k))o[k]={A:v?.[0],M:v?.[1]};
+    else o[k]=v});
+  o.top_words={A:(o.top_words.A||[]).map(w=>[w,0]),M:(o.top_words.M||[]).map(w=>[w,0])};
+  return o};
 
 // t.me/share/url отвечает 400 на длинный запрос. Порог с запасом:
 // длиннее — Telegram открывать не пробуем, ссылка и так лежит в буфере.
 export const TG_LIMIT=3500;
 
+// Отдавать файлы через navigator.share стоит только на телефоне. На десктопе
+// браузер передаёт приложению не сами картинки, а пути к временным файлам,
+// и в чат уезжает список вида /Users/.../wrapped_1.png вместо альбома.
+export function canShareFiles(nav,coarsePointer){
+  if(!nav||typeof nav.share!=='function')return false;
+  const mobile=nav.userAgentData?nav.userAgentData.mobile:coarsePointer;
+  return !!mobile;
+}
+const mobileNow=()=>canShareFiles(typeof navigator!=='undefined'?navigator:null,
+  typeof matchMedia!=='undefined'&&matchMedia('(pointer:coarse)').matches);
+
 export async function buildLink(S){
-  const raw=new TextEncoder().encode(JSON.stringify(slim(S)));
-  const packed='CompressionStream'in window?'z'+b64(await pipe(raw,new CompressionStream('gzip'))):'r'+b64(raw);
+  const raw=new TextEncoder().encode(JSON.stringify(pack(S)));
+  const packed='CompressionStream'in window
+    ? '1'+b64(await pipe(raw,new CompressionStream('deflate-raw')))
+    : 'r'+b64(raw);
   return SITE+location.pathname+'#d='+packed;
 }
 export async function readLink(){
   const m=location.hash.match(/^#d=(.+)$/);if(!m)return null;
   try{
     const p=m[1],u=unb64(p.slice(1));
-    const raw=p[0]==='z'?await pipe(u,new DecompressionStream('gzip')):u;
-    const S=JSON.parse(new TextDecoder().decode(raw));
+    const kind=p[0];
+    const raw=kind==='1'?await pipe(u,new DecompressionStream('deflate-raw'))
+            : kind==='z'?await pipe(u,new DecompressionStream('gzip'))    // ссылки, разосланные раньше
+            : u;
+    const data=JSON.parse(new TextDecoder().decode(raw));
+    const S=Array.isArray(data)?unpack(data):data;
     return S&&S.names&&S.total?S:null;
   }catch{return null}
 }

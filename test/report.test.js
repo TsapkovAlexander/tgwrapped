@@ -76,3 +76,31 @@ test('ссылка с локальной версии ведёт на прод, 
   // без canonical локальный адрес остаётся собой — лучше так, чем ссылка в никуда
   assert.equal(siteFrom('http://localhost:8000', 'localhost', ''), 'http://localhost:8000');
 });
+
+test('упакованный слепок разворачивается обратно без потерь для карточек', async () => {
+  const {slim} = await import('../app/share.js');
+  const full = S();
+  // повторяем то, что делают buildLink/readLink, но без браузерных API
+  const mod = await import('node:fs');
+  const src = mod.readFileSync('app/share.js', 'utf8');
+  assert.ok(src.includes("'deflate-raw'"), 'ссылка должна паковаться deflate-raw');
+  assert.ok(src.includes("kind==='z'"), 'старые ссылки должны продолжать открываться');
+  // slim не должен терять поля, которые рисуются
+  const cards = buildSlides(slim(full));
+  assert.equal(cards.length, buildSlides(full).length);
+  cards.forEach(([, html], i) =>
+    assert.ok(!/undefined|NaN/.test(html), `карточка ${i + 1}: undefined или NaN`));
+});
+
+test('файлы уходят через системное окно только на телефоне', async () => {
+  const {canShareFiles} = await import('../app/share.js');
+  const withShare = {share(){}, canShare(){return true}};
+  // десктоп: браузер передаёт приложению пути к временным файлам вместо картинок
+  assert.equal(canShareFiles({...withShare, userAgentData:{mobile:false}}, false), false);
+  assert.equal(canShareFiles(withShare, false), false, 'без userAgentData решает тип указателя');
+  // телефон
+  assert.equal(canShareFiles({...withShare, userAgentData:{mobile:true}}, false), true);
+  assert.equal(canShareFiles(withShare, true), true);
+  // браузер вообще без Web Share
+  assert.equal(canShareFiles({}, true), false);
+});
