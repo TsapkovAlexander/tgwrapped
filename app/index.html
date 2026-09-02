@@ -1,23 +1,23 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Telegram Wrapped — кто из вас пишет больше</title>
-<meta name="description" content="Загрузите экспорт чата из Telegram и получите десять карточек: кто пишет больше, кто отвечает быстрее, кто извиняется, кто оставляет последнее слово. Файл не покидает ваш телефон.">
-<meta name="version" content="0.7.2">
+<title>Telegram Wrapped — за кем последнее слово</title>
+<meta name="description" content="Скиньте экспорт личного чата из Telegram — получите десять карточек про вас двоих: кто отвечает за полминуты, кто извиняется первым, за кем последнее слово. Файл никуда не уходит.">
+<meta name="version" content="0.7.3">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://retorta.tracedocs.ru/">
 <meta property="og:url" content="https://retorta.tracedocs.ru/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="tgwrapped">
 <meta property="og:locale" content="ru_RU">
-<meta property="og:title" content="Кто из вас пишет больше?">
-<meta property="og:description" content="Экспорт чата из Telegram — десять карточек про вас двоих: кто отвечает за полминуты, кто извиняется, кто оставляет последнее слово. Файл не покидает устройство.">
+<meta property="og:title" content="За кем последнее слово?">
+<meta property="og:description" content="Экспорт личного чата из Telegram — десять карточек про вас двоих: кто отвечает за полминуты, кто извиняется первым, кто пишет вдогонку. Файл никуда не уходит.">
 <meta property="og:image" content="https://retorta.tracedocs.ru/og.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="tgwrapped — карточки статистики переписки">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Кто из вас пишет больше?">
-<meta name="twitter:description" content="Экспорт чата из Telegram — десять карточек про вас двоих. Файл не покидает устройство.">
+<meta name="twitter:title" content="За кем последнее слово?">
+<meta name="twitter:description" content="Экспорт личного чата из Telegram — десять карточек про вас двоих. Файл никуда не уходит.">
 <meta name="twitter:image" content="https://retorta.tracedocs.ru/og.png">
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="site.css">
@@ -29,8 +29,8 @@
   <nav><a href="#how">Как это работает</a><a href="#privacy">Приватность</a></nav></header>
 
  <section class="hero">
-  <h1 class="d">Кто из вас пишет больше?</h1>
-  <p>Загрузите экспорт чата — получите десять карточек про вас двоих. Кто отвечает за полминуты, кто извиняется, кто оставляет последнее слово.</p>
+  <h1 class="d">За кем последнее слово?</h1>
+  <p>Скиньте экспорт личного чата — получите десять карточек про вас двоих. Кто отвечает за полминуты, кто извиняется первым, кто пишет вдогонку. Годами делали, ни разу не считали.</p>
   <label class="drop" id="drop">
    <input type="file" id="file" accept=".json,application/json">
    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
@@ -39,33 +39,33 @@
   </label>
   <p class="priv">
    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-   Файл не покидает устройство — всё считается в браузере</p>
+   Файл никуда не уходит — его читает только ваш браузер</p>
   <div class="status" id="status"></div>
  </section>
 </div>
 
 <div class="wrap"><div class="showcase" id="showcase"></div>
- <p class="caption">Десять карточек. Примерно такие.</p></div>
+ <p class="caption">Десять карточек. Цифры пока чужие.</p></div>
 
 <div class="wrap">
  <section class="block" id="how"><h2 class="d">Как это работает</h2>
   <div class="steps">
-   <div><div class="n">01</div><h3>Экспорт в Telegram Desktop</h3><p>В телефоне экспорта нет. Откройте чат на компьютере: три точки → Export chat history. Формат JSON, медиа снимите — нужен только текст.</p></div>
-   <div><div class="n">02</div><h3>Загрузите result.json</h3><p>Даже 18 мегабайт считаются за пару секунд. Прямо здесь, в браузере.</p></div>
-   <div><div class="n">03</div><h3>Отправьте второму</h3><p>Альбомом, одной картинкой, текстом или ссылкой — в тот самый чат.</p></div>
+   <div><div class="n">01</div><h3>Экспорт — только с компьютера</h3><p>В телефоне экспорта нет. Откройте чат в Telegram Desktop: три точки → Export chat history, формат JSON, галочки с медиа снимите — нужен только текст.</p></div>
+   <div><div class="n">02</div><h3>Загрузите result.json</h3><p>Считается в браузере. 35 тысяч сообщений, 18 мегабайт — около полутора секунд, и все десять карточек на экране.</p></div>
+   <div><div class="n">03</div><h3>Отправьте в тот же чат</h3><p>Альбомом, одним листом, текстом или ссылкой. Ссылка — единственный случай, когда цифры уходят с устройства: они лежат в самом адресе, а адрес — на серверах Telegram.</p></div>
   </div>
  </section>
 
- <section class="block" id="privacy"><h2 class="d">Ничего не уходит с устройства</h2>
-  <p style="margin-top:16px;font-size:17px;line-height:1.5;color:var(--mute);max-width:56ch">Файл читается в браузере, цифры считаются там же. Сервера, который мог бы принять переписку, не существует.</p>
+ <section class="block" id="privacy"><h2 class="d">Чат на двоих, а не на троих</h2>
+  <p style="margin-top:16px;font-size:17px;line-height:1.5;color:var(--mute);max-width:56ch">Файл открывается в браузере, цифры считаются там же. Сервера у сайта нет, третьему читателю взяться неоткуда: переписку видят те же двое, что её написали.</p>
   <div class="proof">
-   <div><b>Проверьте сами</b><p>Включите авиарежим и загрузите файл. Всё посчитается.</p></div>
-   <div><b>Открытый код</b><p>Анализатор — один файл на JavaScript. <a href="https://github.com/TsapkovAlexander/tgwrapped" rel="noopener" style="text-decoration:underline">Каждая регулярка на виду</a>.</p></div>
-   <div><b>Без регистрации</b><p>Нет аккаунта — нечему утекать. Закрыли вкладку — всё исчезло.</p></div>
+   <div><b>Проверьте сами</b><p>Отключите сеть и загрузите файл. Всё посчитается: интернет этому сайту нужен один раз — чтобы открыться.</p></div>
+   <div><b>Код на GitHub</b><p>Анализатор — один файл на JavaScript, <a href="https://github.com/TsapkovAlexander/tgwrapped" rel="noopener" style="text-decoration:underline">лежит на GitHub</a>. Каждая регулярка, которая ищет «извини», на виду.</p></div>
+   <div><b>Без аккаунта</b><p>Ни логина, ни почты. Регистрации нет, значит нет и базы, где лежал бы ваш чат.</p></div>
   </div>
  </section>
 
- <footer><span>tgwrapped.ru</span><span>Считается в браузере, ничего не сохраняется</span></footer>
+ <footer><span>tgwrapped.ru</span><span>Посчитали и забыли</span></footer>
 </div>
 </main>
 
