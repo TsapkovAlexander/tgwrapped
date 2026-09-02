@@ -110,6 +110,22 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;display:flex;justify
 .opt .ds{display:block;font-size:13px;line-height:1.4;color:var(--mute);margin-top:2px}
 .opt .warn{margin-top:6px;display:flex;align-items:flex-start;gap:6px;font-size:12px;line-height:1.4;color:var(--warn)}
 .sheet .btn{margin-top:16px}
+.picks{margin:16px 0 6px;max-height:46vh;overflow-y:auto}
+.pick{width:100%;display:flex;align-items:center;gap:12px;padding:11px 0;border:0;border-top:1px solid #F0EDE7;
+  background:none;font:inherit;text-align:left;color:inherit;cursor:pointer}
+.pick .box{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--dash);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center}
+.pick.on .box{background:var(--ink);border-color:var(--ink)}
+.pick .box svg{opacity:0}
+.pick.on .box svg{opacity:1}
+.pick .n{font-size:13px;color:var(--mute);width:22px;flex-shrink:0}
+.pick .t{font-size:15px}
+.prog{display:flex;gap:4px;margin:20px 0 4px}
+.prog i{flex:1;height:6px;border-radius:3px;background:var(--line);transition:background .2s}
+.prog i.on{background:var(--ink)}
+.prog i.now{background:var(--a)}
+#sheetWork .hint{margin-top:8px}
+#sheetWork #workNote{margin-top:12px;line-height:1.45}
 
 .sheet{transition:transform .24s cubic-bezier(.2,.8,.2,1),opacity .2s}
 @media(min-width:721px){

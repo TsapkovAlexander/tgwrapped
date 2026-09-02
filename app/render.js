@@ -22,7 +22,7 @@ export function buildSlides(S){
   <div class="sub">писали друг другу ${np(S.active_days,DAY)} из ${fm(S.days)}</div></div>
   <div style="margin-top:72px">${pair(A,M,S.per_user.A,S.per_user.M)}</div>
   ${S.calls.n?`<div class="note" style="margin-top:56px">Плюс ${np(S.calls.n,CALL)} на ${S.calls.hours.toLocaleString('ru-RU')} ч</div>`:''}
-  ${ft(1)}`]);
+  ${ft(1)}`,'Сколько всего']);
 
   // 2 — с чего всё началось
   sl.push(['peach',`${hd('С чего всё началось',S.first_msg.date)}
@@ -33,7 +33,7 @@ export function buildSlides(S){
   <div style="margin-top:20px;font-size:36px;line-height:1.3">«${q(S.last_msg.text)}»</div>
   <div class="sub" style="margin-top:12px">${S.last_msg.who==='A'?A:M}, ${S.last_msg.date}</div></div>
   <div class="note" style="margin-top:auto;margin-bottom:0">С тех пор — ${np(S.total,MSG)} и ${np(S.sessions,TALK)}</div>
-  ${ft(2)}`]);
+  ${ft(2)}`,'С чего всё началось']);
 
   // 3 — кто быстрее
   const fast=S.resp_median.A<=S.resp_median.M?A:M,slow=fast===A?M:A;
@@ -46,7 +46,7 @@ export function buildSlides(S){
    <div class="r"><span class="dot a"></span><span>90 % ответов ${A} — быстрее</span><b>${Math.round(S.resp_p90.A/60)} мин</b></div>
    <div class="r"><span class="dot m"></span><span>90 % ответов ${M} — быстрее</span><b>${Math.round(S.resp_p90.M/60)} мин</b></div></div>
   <div class="note" style="margin-top:56px">Лучшая перестрелка — ${np(S.pingpong.n,MSG)} быстрее минуты подряд, ${S.pingpong.date}</div>
-  ${ft(3)}`]);
+  ${ft(3)}`,'Кто отвечает быстрее']);
 
   // 4 — когда пишете
   const night=pct(S.night.A+S.night.M,S.total-(S.night.A+S.night.M)),peak=S.hours.indexOf(Math.max(...S.hours)),top=Math.max(...S.hours);
@@ -57,7 +57,7 @@ export function buildSlides(S){
   <div class="hrs">${S.hours.map((v,i)=>`<i class="${i===peak?'hot':''}" style="height:${Math.max(10,v/top*520)}px"></i>`).join('')}</div>
   <div class="ax"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
   <div class="note" style="margin-top:48px">${pct(S.weekend.A+S.weekend.M,S.total)} % на выходных · ${np(S.deep_night,TALK)} заехали за три ночи · ${WD[S.wd_top]} — ваш день</div>
-  ${ft(4)}`]);
+  ${ft(4)}`,'Когда вы пишете']);
 
   // 5 — кто вы в этом чате
   sl.push(['cream',`${hd('Кто вы в этом чате','5 / __N__')}
@@ -71,7 +71,7 @@ export function buildSlides(S){
    ${row('Говорит «я»',S.kw.me.A,S.kw.me.M)}${row('Говорит «мы»',S.kw.we.A,S.kw.we.M)}
    ${row('Обещает',S.kw.promise.A,S.kw.promise.M)}${row('Отвечает «ок»',S.kw.ok.A,S.kw.ok.M)}
    ${row('Правит написанное',S.edited.A,S.edited.M)}${row('Голосовые',S.voice.A,S.voice.M)}</div>
-  <div class="ft"><span>tgwrapped.ru</span><span>${both}</span></div>`]);
+  <div class="ft"><span>tgwrapped.ru</span><span>${both}</span></div>`,'Кто вы в этом чате']);
 
   // 6 — фирменные слова
   const sig=(u,n)=>{const w=S.signature[u];return w.length
@@ -83,7 +83,7 @@ export function buildSlides(S){
   <div class="h2" style="margin-top:64px">А так — только ${M}</div>
   ${sig('M',A)}
   <div class="note push" style="margin-top:56px">Во сколько раз чаще, чем второй. Словарь: ${fm(S.vocab.A[0])} и ${np(S.vocab.M[0],WORD)}</div>
-  ${ft(6)}`]);
+  ${ft(6)}`,'Ваши слова']);
 
   // 7 — кто начинает и заканчивает
   const starter=S.starts.A>=S.starts.M?A:M,ender=S.ends.A>=S.ends.M?A:M;
@@ -100,7 +100,7 @@ export function buildSlides(S){
    <div class="r"><span class="dot a"></span><span>${A} пишет вдогонку, не дождавшись</span><b>${fm(S.double.A)}</b></div>
    <div class="r"><span class="dot m"></span><span>${M} пишет вдогонку, не дождавшись</span><b>${fm(S.double.M)}</b></div></div>
   <div class="note" style="margin-top:44px">Доля отвеченных вопросов — ${A}: ${S.answered.A} %, ${M}: ${S.answered.M} %</div>
-  ${ft(7)}`]);
+  ${ft(7)}`,'Начало и конец']);
 
   // 8 — рекорды
   const pause=S.pauses[0];
@@ -112,7 +112,7 @@ export function buildSlides(S){
    <div class="stat"><span class="n">${fm(S.streak.n)}</span><span class="sub">${plural(S.streak.n,DAY)} подряд без пропусков, до ${S.streak.end}</span></div>
    <div class="stat"><span class="n">${fm(pause?pause.days:0)}</span><span class="sub">${plural(pause?pause.days:0,DAY)} молчания${pause?`, прервал ${pause.broke==='A'?A:M}`:''}</span></div></div>
   <div class="note" style="margin-top:56px">Плотнее всего — ${S.top_days[0][0]}, ${np(S.top_days[0][1],MSG)} · громче всего ${S.month_top[0]}, тише всего ${S.month_low[0]}</div>
-  ${ft(8)}`]);
+  ${ft(8)}`,'Рекорды']);
 
   // 9 — о чём это всё
   const em=[...S.emoji.A.slice(0,3),...S.emoji.M.slice(0,3)];
@@ -126,7 +126,7 @@ export function buildSlides(S){
   ${em.length?`<div class="sect">Эмодзи и реакции</div><div class="tags">${em.map(([e,n])=>`<span class="tag">${e} ${fm(n)}</span>`).join('')}${S.reactions.slice(0,3).map(([e,n])=>`<span class="tag">${e} ${fm(n)}</span>`).join('')}</div>`:''}
   ${S.stickers.A+S.stickers.M>=10?`<div class="sect">Стикеры</div><div class="tags">${S.stickers.top.slice(0,5).map(([e,n])=>`<span class="tag">${e} ${fm(n)}</span>`).join('')}</div>`:''}
   <div class="note push" style="margin-top:48px">${np(S.words.A+S.words.M,WORD)} ≈ ${np((S.words.A+S.words.M)/250,PAGE)}${S.voice_secs.A+S.voice_secs.M?` · голосом наговорили ${Math.round((S.voice_secs.A+S.voice_secs.M)/60)} мин`:''}</div>
-  ${ft(9)}`]);
+  ${ft(9)}`,'О чём это всё']);
 
   // 10 — вердикт
   const T=titles(S);
@@ -146,9 +146,9 @@ export function buildSlides(S){
     <div class="h2" style="margin-top:10px;font-size:${size(T.M.title)}">${T.M.title}</div>
     <div class="sub" style="margin-top:14px">${T.M.text}</div></div></div>
   <div class="note" style="margin-top:0">${T.chat}</div>
-  ${ft(10)}`]);
+  ${ft(10)}`,'Вердикт']);
 
-  return sl.map(([c,h])=>[c,h.replace(/__N__/g,String(sl.length))]);
+  return sl.map(([c,h,t])=>[c,h.replace(/__N__/g,String(sl.length)),t]);
 }
 
 // Правила вердикта: у кого какая метрика перевешивает соперника.

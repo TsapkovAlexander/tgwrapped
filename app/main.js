@@ -2,7 +2,7 @@
 import {analyze} from './stats.js';
 import {np,DAY,MSG} from './format.js';
 import {buildSlides} from './render.js';
-import {slideBlob,saveBlob,prepareAlbum,prepareSheet,sendFiles,willShare,reportText,copyText,buildLink,readLink,tgShareUrl,TG_LIMIT} from './share.js';
+import {slideBlob,saveBlob,prepareAlbum,prepareSheet,sendFiles,willShare,reportText,copyText,buildLink,readLink,tgShareUrl,TG_LIMIT,SITE} from './share.js';
 
 const $=s=>document.querySelector(s);
 let DATA=null,S=null,SLIDES=[],i=0;
@@ -54,6 +54,7 @@ function show(){
   [...$('#bars').children].forEach((b,n)=>b.onclick=()=>go(n));
   [...$('#dots').children].forEach((b,n)=>b.onclick=()=>go(n));
   paint();say('');
+  $('#oneName').textContent=SLIDES[0][2];
   window.scrollTo({top:0,behavior:'instant'});
 }
 function paint(){
@@ -64,7 +65,8 @@ function paint(){
   $('#prev').disabled=i===0;$('#next').disabled=i===SLIDES.length-1;
   fit();
 }
-const go=n=>{i=Math.max(0,Math.min(SLIDES.length-1,n));paint()};
+const go=n=>{i=Math.max(0,Math.min(SLIDES.length-1,n));paint();
+  const one=$('#oneName');if(one&&SLIDES[i])one.textContent=SLIDES[i][2]};
 $('#prev').onclick=()=>go(i-1);
 $('#next').onclick=()=>go(i+1);
 document.addEventListener('keydown',e=>{if($('#result').hidden)return;
@@ -85,15 +87,7 @@ $('#applyNames').onclick=()=>{
 
 // шит
 const sheet=on=>{$('#sheet').classList.toggle('on',on);$('#scrim').classList.toggle('on',on)};
-$('#send').onclick=()=>{
-  if(!READY)return sheet(true);
-  const files=READY;
-  // строго внутри обработчика клика — иначе браузер отклонит отправку
-  sendFiles(files).then(how=>{
-    say(how==='share'?'Отправлено':`${files.length>1?files.length+' файлов':'Картинка'} в загрузках — прикрепите ${files.length>1?'их':'её'} в чат`);
-    resetSend();
-  }).catch(e=>{if(e.name!=='AbortError')say(e.message,true)});
-};
+$('#send').onclick=()=>sheet(true);
 $('#sheetClose').onclick=()=>sheet(false);
 $('#scrim').onclick=()=>sheet(false);
 
@@ -118,28 +112,87 @@ const busy=async fn=>{
 };
 $('#png').onclick=()=>busy(()=>withExportScope(async mount=>{
   saveBlob(await slideBlob(i+1,mount),`wrapped_${i+1}.png`);say('Карточка в загрузках')}));
-// Картинки рисуются секундами, а navigator.share требует свежего клика:
-// поэтому сначала готовим файлы, а отправляем отдельной кнопкой.
+// Картинки рисуются секундами, а navigator.share требует свежего клика.
+// Поэтому окно отправки не закрывается: в нём идёт прогресс, и оттуда же
+// вторым нажатием уходят готовые файлы.
 let READY=null;
-function offerSend(files,label){
+const opts=()=>[...document.querySelectorAll('.opt'), $('#sheetClose')];
+// В окне три экрана: список способов, выбор карточек и прогресс.
+function screen(name){
+  const menu=name==='menu';
+  opts().forEach(b=>b.hidden=!menu);
+  $('#sheetTitle').hidden=!menu;
+  $('#sheet').querySelector('.hint').hidden=!menu;
+  $('#sheetPick').hidden=name!=='pick';
+  $('#sheetWork').hidden=name!=='work';
+}
+function workMode(on,title){
+  screen(on?'work':'menu');
+  if(on){
+    $('#workTitle').textContent=title;
+    $('#prog').innerHTML='';
+    $('#workSend').disabled=true;$('#workSend').textContent='Подождите…';
+    $('#workHint').textContent='Это занимает около двадцати секунд';
+  }
+}
+const tick=(n,of)=>{
+  if($('#prog').children.length!==of)$('#prog').innerHTML=Array.from({length:of},()=>'<i></i>').join('');
+  [...$('#prog').children].forEach((b,k)=>b.className=k<n-1?'on':k===n-1?'now':'');
+  $('#workHint').textContent=`Карточка ${n} из ${of}`;
+};
+function ready(files){
   READY=files;
-  const btn=$('#send');
-  btn.dataset.mode='ready';
-  btn.innerHTML=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg> ${label}`;
-  say('Готово — нажмите «' + label + '»');
+  [...$('#prog').children].forEach(b=>b.className='on');
+  $('#workTitle').textContent='Готово';
+  $('#workHint').textContent=files.length>1?`${files.length} карточек готовы`:'Карточка готова';
+  const send=$('#workSend');
+  send.disabled=false;
+  send.textContent=willShare(files)
+    ? (files.length>1?`Отправить ${files.length} карточек`:'Отправить картинку')
+    : (files.length>1?`Скачать ${files.length} карточек`:'Скачать картинку');
+  $('#workNote').hidden=!willShare(files);
 }
-function resetSend(){
-  READY=null;
-  const btn=$('#send');
-  btn.dataset.mode='';
-  btn.innerHTML=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg> Отправить в Telegram`;
+$('#workCancel').onclick=()=>{READY=null;sheet(false);workMode(false)};
+
+// Выбор карточек: по умолчанию отмечены все, снять можно любые.
+let PICK=null;
+function renderPicks(){
+  $('#picks').innerHTML=SLIDES.map(([,,name],i)=>
+    `<button class="pick${PICK.has(i+1)?' on':''}" data-n="${i+1}"><span class="box">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FBFAF7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+     </span><span class="n">${i+1}</span><span class="t">${name}</span></button>`).join('');
+  const n=PICK.size;
+  $('#pickHint').textContent=n?`Выбрано ${n} из ${SLIDES.length}`:'Ничего не выбрано';
+  $('#pickGo').disabled=!n;
+  $('#pickGo').textContent=n===1?'Готовить карточку':`Готовить ${n} карточек`;
 }
-$('#optAlbum').onclick=()=>busy(async()=>{sheet(false);say(`Рисую ${SLIDES.length} карточек, это около 20 секунд…`);
-  const files=await withExportScope(mount=>prepareAlbum(step,SLIDES.length,mount));
-  offerSend(files,willShare(files)?`Отправить ${files.length} карточек`:`Скачать ${files.length} карточек`)});
-$('#optSheet').onclick=()=>busy(async()=>{sheet(false);say('Собираю картинку из всех карточек, это около 20 секунд…');
-  const files=await withExportScope(mount=>prepareSheet(step,SLIDES.length,mount));
-  offerSend(files,willShare(files)?'Отправить картинку':'Скачать картинку')});
+$('#picks').onclick=ev=>{const b=ev.target.closest('.pick');if(!b)return;
+  const n=+b.dataset.n;PICK.has(n)?PICK.delete(n):PICK.add(n);renderPicks()};
+$('#optPick').onclick=()=>{PICK=new Set(SLIDES.map((_,i)=>i+1));renderPicks();screen('pick')};
+$('#pickCancel').onclick=()=>screen('menu');
+$('#pickGo').onclick=()=>busy(async()=>{
+  const nums=[...PICK].sort((a,b)=>a-b);
+  workMode(true,nums.length===1?'Рисую карточку':'Рисую карточки');
+  ready(await withExportScope(mount=>prepareAlbum(tick,nums,mount)))});
+$('#optOne').onclick=()=>busy(async()=>{workMode(true,'Рисую карточку');
+  ready(await withExportScope(mount=>prepareAlbum(tick,[i+1],mount)))});
+$('#workSend').onclick=()=>{
+  if(!READY)return;
+  const files=READY;READY=null;
+  // всё внутри обработчика клика: и буфер, и отправка требуют живого жеста
+  copyText(SITE).then(ok=>{
+    sendFiles(files).then(how=>{
+      sheet(false);workMode(false);
+      say(how==='share'
+        ? (ok?'Отправлено. Ссылка в буфере — вставьте её следующим сообщением':'Отправлено')
+        : `${files.length>1?files.length+' файлов':'Картинка'} в загрузках — прикрепите ${files.length>1?'их':'её'} в чат`);
+    }).catch(e=>{sheet(false);workMode(false);if(e.name!=='AbortError')say(e.message,true)});
+  });
+};
+$('#optAlbum').onclick=()=>busy(async()=>{workMode(true,'Рисую карточки');
+  ready(await withExportScope(mount=>prepareAlbum(tick,SLIDES.map((_,k)=>k+1),mount)))});
+$('#optSheet').onclick=()=>busy(async()=>{workMode(true,'Собираю картинку');
+  ready(await withExportScope(mount=>prepareSheet(tick,SLIDES.map((_,k)=>k+1),mount)))});
 $('#optText').onclick=()=>busy(async()=>{sheet(false);
   say(await copyText(reportText(S))?'Текст в буфере — вставьте в чат':'Буфер недоступен, выделите текст вручную')});
 $('#optLink').onclick=()=>busy(async()=>{sheet(false);

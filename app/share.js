@@ -48,17 +48,19 @@ export async function slideBlob(i,prepare){const c=await slideCanvas(i,prepare);
 export function saveBlob(b,name){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000)}
 
 // Альбом: восемь файлов одним шерингом. Telegram принимает их альбомом.
-export async function prepareAlbum(step,n=count(),prepare){
+export async function prepareAlbum(step,nums,prepare){
   const files=[];
-  for(let i=1;i<=n;i++){step?.(i,n);files.push(new File([await slideBlob(i,prepare)],`wrapped_${i}.png`,{type:'image/png'}))}
+  let k=0;
+  for(const i of nums){step?.(++k,nums.length);files.push(new File([await slideBlob(i,prepare)],`wrapped_${i}.png`,{type:'image/png'}))}
   return files;
 }
-export async function prepareSheet(step,n=count(),prepare){
-  const k=sheetScale(n);
+export async function prepareSheet(step,nums,prepare){
+  const n=nums.length,k=sheetScale(n);
   const w=Math.round(W*k),h=Math.round(H*k),rows=Math.ceil(n/COLS);
   const c=document.createElement('canvas');c.width=w*COLS;c.height=h*rows;
   const ctx=c.getContext('2d');
-  for(let i=1;i<=n;i++){step?.(i,n);const s=await slideCanvas(i,prepare);ctx.drawImage(s,(i-1)%COLS*w,Math.floor((i-1)/COLS)*h,w,h);s.width=s.height=0}
+  let j=0;
+  for(const i of nums){step?.(++j,n);const s=await slideCanvas(i,prepare);ctx.drawImage(s,(j-1)%COLS*w,Math.floor((j-1)/COLS)*h,w,h);s.width=s.height=0}
   const b=await toBlob(c);c.width=c.height=0;
   return [new File([b],'wrapped.png',{type:'image/png'})];
 }
