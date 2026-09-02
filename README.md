@@ -37,7 +37,8 @@ npm test        # тесты анализатора, метрик и карто�
 
 ```
 npm run demo -- <path/to/result.json>   # пересобрать витрину на главной
-python3 scripts/make-og.py              # пересобрать превью ссылки
+npm run og                              # пересобрать превью ссылки
+npm run site -- https://ваш.домен       # адрес сайта в OG-разметке
 npm run version:check                   # версия в package.json и в <meta> совпадают
 ```
 

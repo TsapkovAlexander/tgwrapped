@@ -4,9 +4,10 @@ import {fm,pct,np,plural,DAY,MSG,CALL,TALK} from './format.js';
 import {titles} from './render.js';
 
 const W=1080,H=1920;
-// Куда идти тому, кому прислали карточки. Всегда прод, а не origin:
-// картинку могут открыть где угодно, а сделать свой отчёт можно только здесь.
-export const SITE='https://tgwrapped.ru';
+// Куда идти тому, кому прислали карточки: туда, где открыт сайт сейчас.
+// Домен у проекта может смениться, а ссылка в чужом чате должна остаться живой.
+export const SITE=typeof location!=='undefined'&&location.origin.startsWith('http')
+  ? location.origin : 'https://tgwrapped.ru';
 const count=()=>document.querySelectorAll('#exportScope .slide').length||8;
 // Лист собирается сеткой, а не полосой: Telegram отправляет картинку фотографией,
 // только если сумма сторон не больше 10 000 px — полоса ушла бы документом, без превью.
