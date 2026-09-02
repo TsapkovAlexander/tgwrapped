@@ -1,0 +1,17 @@
+{
+  "name": "tgwrapped",
+  "version": "0.5.0",
+  "private": true,
+  "description": "Telegram Wrapped: JSON-экспорт личного чата превращается в 8 карточек прямо в браузере",
+  "scripts": {
+    "dev": "python3 -m http.server 8000 --directory app",
+    "test": "TZ=UTC node --test test/*.test.js",
+    "version:check": "node scripts/version.mjs",
+    "version:sync": "node scripts/version.mjs --write",
+    "demo": "node scripts/make-demo.mjs",
+    "fixture": "node scripts/make-fixture.mjs",
+    "og": "python3 scripts/make-og.py"
+  },
+  "type": "module",
+  "license": "MIT"
+}

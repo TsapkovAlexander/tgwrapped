@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&amp;display=swap">
+  <style>
+    /* Gluten только на цифрах и разделителе разрядов — кириллицы в нём нет, буквы берёт Nunito */
+    @font-face { font-family: "Gluten"; font-style: normal; font-weight: 400 700;
+      src: url(https://fonts.gstatic.com/s/gluten/v18/HhyIU5gk9fW7OUdVIPh2zD_RSqQJ__A1zDQhQ4UeNrg.woff2) format("woff2");
+      unicode-range: U+0030-0039, U+0025, U+00A0, U+202F; }
+    body { margin: 0; background: #FBFAF7; color: #1F1D1B;
+      font-family: "Gluten", "Nunito", "Trebuchet MS", sans-serif; font-weight: 500;
+      -webkit-font-smoothing: antialiased; }
+    a { color: #1F1D1B; text-decoration: none; } a:hover { color: #6F6A64; }
+    .display { font-weight: 800; letter-spacing: -0.025em; }
+  </style>
+</helmet>
+<div style="width: 540px; height: 960px; background: #1F1D1B; color: #FBFAF7; padding: 56px 48px; display: flex; flex-direction: column; box-sizing: border-box;">
+  <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #A8A29A;"><span>Кто отвечает быстрее</span><span>Лена и Дима</span></div>
+  <div class="display" style="margin-top: auto; font-size: 190px; line-height: 0.88; letter-spacing: -0.03em;">31<span style="font-size: 52px; letter-spacing: 0; margin-left: 22px; font-weight: 700;">сек</span></div>
+  <div style="margin-top: 18px; font-size: 24px; line-height: 1.3;">медианный ответ Димы</div>
+  <div style="font-size: 19px; line-height: 1.35; color: #A8A29A;">Лена отвечает за 37 сек. Никто не ждёт.</div>
+  <div style="margin-top: 48px; display: flex; flex-direction: column; gap: 14px; font-size: 18px; line-height: 1.4;">
+    <div style="display: flex; align-items: baseline; gap: 12px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: #D9694F; flex-shrink: 0; position: relative; top: -2px;"></span><span style="color: #A8A29A;">90 % ответов Лены — быстрее</span><span style="margin-left: auto; font-weight: 500;">19 мин</span></div>
+    <div style="display: flex; align-items: baseline; gap: 12px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: #4C8BC9; flex-shrink: 0; position: relative; top: -2px;"></span><span style="color: #A8A29A;">90 % ответов Димы — быстрее</span><span style="margin-left: auto; font-weight: 500;">9 мин</span></div>
+    <div style="margin-top: 8px; padding-top: 14px; border-top: 1px solid rgba(251,250,247,0.14); color: #A8A29A;">865 вопросов остались без ответа: Лена — 316, Дима — 549</div>
+  </div>
+  <div style="margin-top: 40px; display: flex; justify-content: space-between; font-size: 15px; color: #A8A29A;"><span>tgwrapped.ru</span><span>2 / 8</span></div>
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Telegram Wrapped — кто из вас пишет больше</title>
+<meta name="description" content="Загрузите экспорт чата из Telegram и получите десять карточек: кто пишет больше, кто отвечает быстрее, кто извиняется, кто оставляет последнее слово. Файл не покидает ваш телефон.">
+<meta name="version" content="0.5.0">
+<link rel="canonical" href="https://tgwrapped.ru/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="tgwrapped">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://tgwrapped.ru/">
+<meta property="og:title" content="Кто из вас пишет больше?">
+<meta property="og:description" content="Экспорт чата из Telegram — десять карточек про вас двоих: кто отвечает за полминуты, кто извиняется, кто оставляет последнее слово. Файл не покидает устройство.">
+<meta property="og:image" content="https://tgwrapped.ru/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="tgwrapped — карточки статистики переписки">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Кто из вас пишет больше?">
+<meta name="twitter:description" content="Экспорт чата из Telegram — десять карточек про вас двоих. Файл не покидает устройство.">
+<meta name="twitter:image" content="https://tgwrapped.ru/og.png">
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="slide.css"></head><body>
+
+<main id="landing">
+<div class="wrap">
+ <header class="top"><span class="brand">tgwrapped</span>
+  <nav><a href="#how">Как это работает</a><a href="#privacy">Приватность</a></nav></header>
+
+ <section class="hero">
+  <h1 class="d">Кто из вас пишет больше?</h1>
+  <p>Загрузите экспорт чата — получите десять карточек про вас двоих. Кто отвечает за полминуты, кто извиняется, кто оставляет последнее слово.</p>
+  <label class="drop" id="drop">
+   <input type="file" id="file" accept=".json,application/json">
+   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+   <strong>Перетащите сюда result.json</strong>
+   <span class="btn">Выбрать файл</span>
+  </label>
+  <p class="priv">
+   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+   Файл не покидает устройство — всё считается в браузере</p>
+  <div class="status" id="status"></div>
+ </section>
+</div>
+
+<div class="wrap"><div class="showcase" id="showcase"></div>
+ <p class="caption">Десять карточек. Примерно такие.</p></div>
+
+<div class="wrap">
+ <section class="block" id="how"><h2 class="d">Как это работает</h2>
+  <div class="steps">
+   <div><div class="n">01</div><h3>Экспорт в Telegram Desktop</h3><p>В телефоне экспорта нет. Откройте чат на компьютере: три точки → Export chat history. Формат JSON, медиа снимите — нужен только текст.</p></div>
+   <div><div class="n">02</div><h3>Загрузите result.json</h3><p>Даже 18 мегабайт считаются за пару секунд. Прямо здесь, в браузере.</p></div>
+   <div><div class="n">03</div><h3>Отправьте второму</h3><p>Альбомом, одной картинкой, текстом или ссылкой — в тот самый чат.</p></div>
+  </div>
+ </section>
+
+ <section class="block" id="privacy"><h2 class="d">Ничего не уходит с устройства</h2>
+  <p style="margin-top:16px;font-size:17px;line-height:1.5;color:var(--mute);max-width:56ch">Файл читается в браузере, цифры считаются там же. Сервера, который мог бы принять переписку, не существует.</p>
+  <div class="proof">
+   <div><b>Проверьте сами</b><p>Включите авиарежим и загрузите файл. Всё посчитается.</p></div>
+   <div><b>Открытый код</b><p>Анализатор — один файл на JavaScript. Каждая регулярка на виду.</p></div>
+   <div><b>Без регистрации</b><p>Нет аккаунта — нечему утекать. Закрыли вкладку — всё исчезло.</p></div>
+  </div>
+ </section>
+
+ <footer><span>tgwrapped.ru</span><span>Считается в браузере, ничего не сохраняется</span></footer>
+</div>
+</main>
+
+<main id="result" hidden><div class="wrap">
+ <header class="rtop"><span class="brand" style="font-weight:800">tgwrapped</span>
+  <button class="link" id="restart">Загрузить другой чат</button></header>
+
+ <div class="names">
+  <div class="row"><span class="d" id="pair"></span>
+   <button class="edit" id="editNames" title="Изменить имена">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button></div>
+  <div class="row" id="nameEdit" hidden>
+   <input id="nA" maxlength="14"><span class="sub">и</span><input id="nM" maxlength="14">
+   <button class="btn ghost" id="applyNames" style="height:36px;padding:0 16px;font-size:14px">Готово</button></div>
+  <div class="sub" id="summary"></div>
+ </div>
+
+ <div class="bars" id="bars"></div>
+
+ <div class="stage">
+  <button class="nav" id="prev" aria-label="Предыдущая">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <div class="frame" id="frame"></div>
+  <button class="nav" id="next" aria-label="Следующая">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+ </div>
+ <div class="dots" id="dots"></div>
+
+ <div class="actions">
+  <button class="btn" id="send">
+   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>
+   Отправить в Telegram</button>
+  <button class="btn ghost" id="png">
+   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+   Скачать PNG</button>
+ </div>
+ <div class="status" id="rstatus" style="text-align:center;margin-top:14px"></div>
+</div></main>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+ <div class="grip"></div>
+ <h3 class="d" id="sheetTitle">Отправить второму</h3>
+ <p class="hint">Откроется системное окно — выберите чат</p>
+
+ <button class="opt" id="optAlbum"><span class="ic">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg></span>
+  <span><span class="tt">Альбом из <span id="albumN">10</span> карточек</span><span class="ds">Уйдёт в чат альбомом, как фото · около 20 секунд</span></span></button>
+
+ <button class="opt" id="optSheet"><span class="ic">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span>
+  <span><span class="tt">Одной картинкой</span><span class="ds">Все карточки на одном листе · около 20 секунд</span></span></button>
+
+ <button class="opt" id="optText"><span class="ic">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h10"/></svg></span>
+  <span><span class="tt">Текстом</span><span class="ds">Короткий отчёт — вставится сообщением</span></span></button>
+
+ <button class="opt" id="optLink"><span class="ic">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></span>
+  <span><span class="tt">Ссылкой</span><span class="ds">Откроет те же карточки без файла</span>
+   <span class="warn">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+    Цифры лежат внутри адреса и попадут на серверы Telegram</span></span></button>
+
+ <button class="btn ghost wide" id="sheetClose">Отмена</button>
+</div>
+
+<script src="vendor/html2canvas.min.js" defer></script>
+<script type="module" src="main.js"></script>
+</body></html>

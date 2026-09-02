@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&amp;display=swap">
+  <style>
+    /* Gluten только на цифрах и разделителе разрядов — кириллицы в нём нет, буквы берёт Nunito */
+    @font-face { font-family: "Gluten"; font-style: normal; font-weight: 400 700;
+      src: url(https://fonts.gstatic.com/s/gluten/v18/HhyIU5gk9fW7OUdVIPh2zD_RSqQJ__A1zDQhQ4UeNrg.woff2) format("woff2");
+      unicode-range: U+0030-0039, U+0025, U+00A0, U+202F; }
+    body { margin: 0; background: #FBFAF7; color: #1F1D1B;
+      font-family: "Gluten", "Nunito", "Trebuchet MS", sans-serif; font-weight: 500;
+      -webkit-font-smoothing: antialiased; }
+    a { color: #1F1D1B; text-decoration: none; } a:hover { color: #6F6A64; }
+    .display { font-weight: 800; letter-spacing: -0.025em; }
+  </style>
+</helmet>
+<div style="width: 390px; min-height: 2080px; background: #FBFAF7; display: flex; flex-direction: column; padding: 0 20px; box-sizing: border-box;">
+
+  <div style="height: 64px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="font-size: 16px; font-weight: 600;">tgwrapped</div>
+    <a href="#how" style="font-size: 14px; color: #6F6A64;">Как это работает</a>
+  </div>
+
+  <div style="padding: 40px 0 48px; display: flex; flex-direction: column; gap: 20px;">
+    <h1 class="display" style="margin: 0; font-size: 44px; line-height: 1.05; text-wrap: balance;">Кто из вас пишет больше?</h1>
+    <p style="margin: 0; font-size: 17px; line-height: 1.45; color: #6F6A64; text-wrap: pretty;">Загрузите экспорт чата — получите восемь карточек про вас двоих. Кто отвечает за полминуты, кто извиняется, кто оставляет последнее слово.</p>
+
+    <div style="margin-top: 8px; border: 1px dashed #C9C3BA; border-radius: 20px; padding: 28px 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; background: #FFFFFF;">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1F1D1B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path><path d="M9 13h6"></path><path d="M9 17h6"></path></svg>
+      <div style="font-size: 16px; font-weight: 500; text-align: center;">Загрузите result.json</div>
+      <div style="height: 48px; align-self: stretch; border-radius: 12px; background: #1F1D1B; color: #FBFAF7; font-size: 15px; font-weight: 500; display: flex; align-items: center; justify-content: center;">Выбрать файл</div>
+    </div>
+
+    <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 1.4; color: #6F6A64;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6F6A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+      <span>Файл не покидает телефон — всё считается в браузере</span>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 16px; padding-bottom: 56px;">
+    <div style="display: flex; gap: 12px; overflow: hidden;">
+      <div style="flex: 0 0 200px; height: 356px; border-radius: 16px; background: #F4F0E8; padding: 20px 18px; display: flex; flex-direction: column; box-shadow: 0 16px 36px rgba(31,29,27,0.10); box-sizing: border-box;">
+        <div style="font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #6F6A64;">Лена и Дима</div>
+        <div class="display" style="margin-top: auto; font-size: 44px; line-height: 0.95; white-space: nowrap;">34 727</div>
+        <div style="margin-top: 8px; font-size: 12px; line-height: 1.35; color: #6F6A64;">сообщений за 933 дня</div>
+        <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+          <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #D9694F;"></span><span>Лена</span><span style="margin-left: auto; font-weight: 500;">17 352</span></div>
+          <div style="display: flex; align-items: center; gap: 6px;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #4C8BC9;"></span><span>Дима</span><span style="margin-left: auto; font-weight: 500;">17 375</span></div>
+        </div>
+      </div>
+      <div style="flex: 0 0 200px; height: 356px; border-radius: 16px; background: #1F1D1B; color: #FBFAF7; padding: 20px 18px; display: flex; flex-direction: column; box-shadow: 0 16px 36px rgba(31,29,27,0.16); box-sizing: border-box;">
+        <div style="font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #A8A29A;">Кто отвечает быстрее</div>
+        <div class="display" style="margin-top: auto; font-size: 72px; line-height: 0.9;">31<span style="font-size: 22px; margin-left: 4px;">сек</span></div>
+        <div style="margin-top: 10px; font-size: 12px; line-height: 1.35; color: #A8A29A;">медианный ответ Димы. Лена — 37 сек.</div>
+      </div>
+    </div>
+    <div style="font-size: 14px; color: #6F6A64;">Восемь карточек. Примерно такие.</div>
+  </div>
+
+  <div id="how" style="border-top: 1px solid #E7E3DC; padding: 48px 0; display: flex; flex-direction: column; gap: 32px;">
+    <h2 class="display" style="margin: 0; font-size: 30px; line-height: 1.1;">Как это работает</h2>
+    <div style="display: flex; flex-direction: column; gap: 28px;">
+      <div style="display: flex; gap: 16px;">
+        <div class="display" style="font-size: 22px; color: #C9C3BA; width: 32px; flex-shrink: 0;">01</div>
+        <div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-size: 16px; font-weight: 500;">Экспорт в Telegram Desktop</div><div style="font-size: 14px; line-height: 1.5; color: #6F6A64;">В телефоне экспорта нет. Откройте чат на компьютере: три точки → Export chat history. Формат JSON, медиа не нужны.</div></div>
+      </div>
+      <div style="display: flex; gap: 16px;">
+        <div class="display" style="font-size: 22px; color: #C9C3BA; width: 32px; flex-shrink: 0;">02</div>
+        <div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-size: 16px; font-weight: 500;">Загрузите result.json</div><div style="font-size: 14px; line-height: 1.5; color: #6F6A64;">Даже 18 мегабайт считаются за пару секунд.</div></div>
+      </div>
+      <div style="display: flex; gap: 16px;">
+        <div class="display" style="font-size: 22px; color: #C9C3BA; width: 32px; flex-shrink: 0;">03</div>
+        <div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-size: 16px; font-weight: 500;">Отправьте второму</div><div style="font-size: 14px; line-height: 1.5; color: #6F6A64;">Альбомом, одной картинкой или текстом — в тот самый чат.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="border-top: 1px solid #E7E3DC; padding: 48px 0; display: flex; flex-direction: column; gap: 24px;">
+    <h2 class="display" style="margin: 0; font-size: 30px; line-height: 1.1;">Ничего не уходит с телефона</h2>
+    <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #6F6A64;">Файл читается в браузере, цифры считаются там же. Сервера, который мог бы принять переписку, не существует.</p>
+    <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14px; line-height: 1.5; color: #6F6A64;">
+      <div><span style="color: #1F1D1B; font-weight: 500;">Проверьте сами.</span> Включите авиарежим и загрузите файл.</div>
+      <div><span style="color: #1F1D1B; font-weight: 500;">Открытый код.</span> Анализатор — один файл на JavaScript.</div>
+      <div><span style="color: #1F1D1B; font-weight: 500;">Без регистрации.</span> Закрыли вкладку — всё исчезло.</div>
+    </div>
+  </div>
+
+  <div style="border-top: 1px solid #E7E3DC; padding: 24px 0 40px; display: flex; justify-content: space-between; font-size: 13px; color: #6F6A64;">
+    <span>tgwrapped.ru</span><a href="#code">Код</a>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

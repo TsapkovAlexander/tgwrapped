@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&amp;display=swap">
+  <style>
+    /* Gluten только на цифрах и разделителе разрядов — кириллицы в нём нет, буквы берёт Nunito */
+    @font-face { font-family: "Gluten"; font-style: normal; font-weight: 400 700;
+      src: url(https://fonts.gstatic.com/s/gluten/v18/HhyIU5gk9fW7OUdVIPh2zD_RSqQJ__A1zDQhQ4UeNrg.woff2) format("woff2");
+      unicode-range: U+0030-0039, U+0025, U+00A0, U+202F; }
+    body { margin: 0; background: #FBFAF7; color: #1F1D1B;
+      font-family: "Gluten", "Nunito", "Trebuchet MS", sans-serif; font-weight: 500;
+      -webkit-font-smoothing: antialiased; }
+    a { color: #1F1D1B; text-decoration: none; } a:hover { color: #6F6A64; }
+    .display { font-weight: 800; letter-spacing: -0.025em; }
+  </style>
+</helmet>
+<div style="width: 540px; height: 960px; background: #F4F0E8; color: #1F1D1B; padding: 56px 48px; display: flex; flex-direction: column; box-sizing: border-box;">
+  <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #6F6A64;"><span>Лена и Дима</span><span>2024 — 2026</span></div>
+  <div class="display" style="margin-top: auto; font-size: 120px; line-height: 0.92; letter-spacing: -0.03em; white-space: nowrap;">34 727</div>
+  <div style="margin-top: 18px; font-size: 24px; line-height: 1.3;">сообщений за 933 дня</div>
+  <div style="font-size: 19px; line-height: 1.35; color: #6F6A64;">писали друг другу 775 дней из 933</div>
+  <div style="margin-top: 48px; display: flex; flex-direction: column; gap: 16px; font-size: 20px;">
+    <div style="display: flex; align-items: center; gap: 12px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: #D9694F;"></span><span>Лена</span><span style="margin-left: auto; font-weight: 500;">17 352</span></div>
+    <div style="display: flex; align-items: center; gap: 12px;"><span style="width: 10px; height: 10px; border-radius: 50%; background: #4C8BC9;"></span><span>Дима</span><span style="margin-left: auto; font-weight: 500;">17 375</span></div>
+    <div style="height: 8px; border-radius: 4px; overflow: hidden; display: flex;"><span style="width: 50%; background: #D9694F;"></span><span style="width: 50%; background: #4C8BC9;"></span></div>
+  </div>
+  <div style="margin-top: 40px; display: flex; justify-content: space-between; font-size: 15px; color: #6F6A64;"><span>tgwrapped.ru</span><span>1 / 8</span></div>
+</div>
+</x-dc>
+</body>
+</html>
