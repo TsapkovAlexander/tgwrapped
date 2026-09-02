@@ -102,10 +102,12 @@ test('файлы отправляются системным окном, есл�
   assert.equal(canShareFiles(null, files), false);
 });
 
-test('вместе с файлами не отправляются text и url', async () => {
+test('вместе с файлами не отправляются text и url, а title — это адрес сайта', async () => {
   const src = (await import('node:fs')).readFileSync('app/share.js', 'utf8');
   const call = src.match(/navigator\.share\(\{files[^)]*\)/);
   assert.ok(call, 'вызов navigator.share с файлами не найден');
   assert.ok(!/text:|url:/.test(call[0]),
     `с файлами уходят лишние поля, браузер отдаст пути вместо картинок: ${call[0]}`);
+  assert.ok(/title:SITE/.test(call[0]),
+    `часть клиентов кладёт title в сообщение — там должен быть адрес сайта: ${call[0]}`);
 });

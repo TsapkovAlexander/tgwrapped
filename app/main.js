@@ -184,7 +184,7 @@ $('#workSend').onclick=()=>{
     sendFiles(files).then(how=>{
       sheet(false);workMode(false);
       say(how==='share'
-        ? (ok?'Отправлено. Ссылка в буфере — вставьте её следующим сообщением':'Отправлено')
+        ? (ok?'Отправлено. Ссылка на сайт скопирована — если её не видно в чате, вставьте вручную':'Отправлено')
         : `${files.length>1?files.length+' файлов':'Картинка'} в загрузках — прикрепите ${files.length>1?'их':'её'} в чат`);
     }).catch(e=>{sheet(false);workMode(false);if(e.name!=='AbortError')say(e.message,true)});
   });

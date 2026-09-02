@@ -69,7 +69,7 @@ export async function prepareSheet(step,nums,prepare){
 // «Must be handling a user gesture to perform a share request».
 export async function sendFiles(files){
   if(canShareFiles(typeof navigator!=='undefined'?navigator:null,files)){
-    await navigator.share({files,title:'Telegram Wrapped'});
+    await navigator.share({files,title:SITE});
     return 'share';
   }
   for(const f of files)saveBlob(f,f.name);
@@ -166,9 +166,11 @@ const unpack=arr=>{const o={};
 // длиннее — Telegram открывать не пробуем, ссылка и так лежит в буфере.
 export const TG_LIMIT=3500;
 
-// Файлы отдаём БЕЗ text и url. С ними браузер не может передать приложению
-// картинки и деградирует до текстового сообщения: в чат приезжает
+// Файлы отдаём БЕЗ text и url: с ними браузер не может передать приложению
+// картинки и деградирует до текстового сообщения — в чат приезжает
 // «/Users/…/wrapped_1.png» списком вместо альбома.
+// А title часть клиентов кладёт в само сообщение, поэтому там адрес сайта,
+// а не название приложения: сообщением рядом с картинками полезна ссылка.
 export function canShareFiles(nav,files){
   return !!(nav&&typeof nav.share==='function'&&nav.canShare&&nav.canShare({files}));
 }
