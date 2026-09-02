@@ -76,12 +76,13 @@ def build():
     p.append(T8.draw("голосом", 1056, 318, 22, INK)[0])
     # левая колонка
     p.append(T8.draw("tgwrapped", 80, 112, 26, INK)[0])
-    p.append(T8.draw("За кем", 80, 246, 62, INK, tracking=-1.4)[0])
-    p.append(T8.draw("последнее слово?", 80, 318, 62, INK, tracking=-1.4)[0])
-    p.append(T5.draw("Экспорт личного чата из Telegram — десять", 80, 408, 26, MUTE)[0])
-    p.append(T5.draw("карточек про вас двоих. За пару секунд.", 80, 446, 26, MUTE)[0])
+    p.append(T8.draw("Кто-то из вас", 80, 226, 60, INK, tracking=-1.4)[0])
+    p.append(T8.draw("всегда пишет", 80, 296, 60, INK, tracking=-1.4)[0])
+    p.append(T8.draw("первым", 80, 366, 60, INK, tracking=-1.4)[0])
+    p.append(T5.draw("А кто-то извиняется, пишет вдогонку", 80, 428, 25, MUTE)[0])
+    p.append(T5.draw("и ставит точку. Десять карточек с цифрами.", 80, 464, 25, MUTE)[0])
     p.append(f'<circle cx="88" cy="508" r="7" fill="{CORAL}"/>')
-    p.append(T6.draw("Файл никуда не уходит", 108, 517, 23, INK)[0])
+    p.append(T6.draw("Переписка не уходит с устройства", 108, 522, 22, INK)[0])
     p.append(T5.draw("tgwrapped.ru", 80, 574, 21, MUTE)[0])
     return ('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">'
             + "\n".join(p) + "</svg>")

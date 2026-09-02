@@ -24,6 +24,7 @@ h1{font-size:clamp(40px,7vw,76px);font-weight:800;letter-spacing:-.03em;line-hei
 .drop:hover,.drop.over{border-color:var(--ink);transform:translateY(-1px)}
 .drop strong{font-size:17px;font-weight:600}
 .drop input{display:none}
+.drop .hint{font-size:13px;line-height:1.45;color:var(--mute);max-width:40ch;text-align:center}
 .hero .priv{display:flex;align-items:center;gap:8px;justify-content:center;font-size:14px;color:var(--mute);max-width:none}
 .status{min-height:24px;font-size:15px;font-weight:600}
 .status.err{color:var(--a)}
@@ -43,6 +44,21 @@ h1{font-size:clamp(40px,7vw,76px);font-weight:800;letter-spacing:-.03em;line-hei
   box-shadow:0 20px 48px rgba(31,29,27,.10);flex-shrink:0}
 .showcase .card .slide{position:absolute;top:0;left:0;transform-origin:0 0}
 .caption{text-align:center;font-size:15px;color:var(--mute);padding:24px 0 96px}
+
+/* что покажут карточки */
+.reveal{padding:8px 0 72px}
+.reveal h2{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.reveal ul{list-style:none;margin-top:28px;columns:2;column-gap:56px}
+.reveal li{break-inside:avoid;padding:16px 0;border-top:1px solid var(--line);font-size:clamp(17px,1.6vw,20px);line-height:1.4;text-wrap:pretty}
+.reveal li:nth-child(1),.reveal li:nth-child(6){border-top:0}
+
+/* как достать экспорт — переписка */
+.chat .msgs{display:flex;flex-direction:column;gap:12px;margin-top:32px;max-width:640px}
+.chat .m{max-width:82%;padding:14px 18px;border-radius:20px;font-size:clamp(16px,1.6vw,18px);line-height:1.4;text-wrap:pretty}
+.chat .m.l{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:6px}
+.chat .m.r{align-self:flex-end;background:var(--ink);color:var(--paper);border-bottom-right-radius:6px}
+.chat .m.sys{align-self:center;background:none;color:var(--mute);font-size:14px;padding:6px 0;max-width:none}
+section.block .lead{margin-top:16px;font-size:17px;line-height:1.5;color:var(--mute);max-width:60ch;text-wrap:pretty}
 
 /* секции лендинга */
 section.block{border-top:1px solid var(--line);padding:80px 0}
@@ -135,6 +151,9 @@ footer{border-top:1px solid var(--line);padding:28px 0 48px;display:flex;justify
   .sheet h3{margin-top:8px}
 }
 @media(max-width:720px){
+  .reveal ul{columns:1}
+  .reveal li:nth-child(6){border-top:1px solid var(--line)}
+  .chat .m{max-width:92%}
   .showcase{overflow-x:auto;justify-content:flex-start;padding:0 20px 16px;margin:0 -20px;scroll-snap-type:x mandatory}
   .showcase .card{scroll-snap-align:center}
   .stage .nav{display:none}
