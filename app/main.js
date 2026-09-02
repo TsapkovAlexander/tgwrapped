@@ -212,4 +212,15 @@ $('#optLink').onclick=()=>busy(async()=>{sheet(false);
 $('#restart').onclick=()=>{location.hash='';location.reload()};
 
 // результат, пришедший ссылкой
-readLink().then(got=>{if(!got)return;S=got;DATA=null;show();say(`Вам прислали результат: ${S.names.A} и ${S.names.M}`)});
+function openShared(){
+  return readLink().then(got=>{
+    if(!got)return false;
+    S=got;DATA=null;show();
+    say(`Вам прислали результат: ${S.names.A} и ${S.names.M}`);
+    return true;
+  });
+}
+openShared();
+// Ссылку могут вставить в адресную строку на уже открытой вкладке: смена хеша
+// страницу не перезагружает, и без этого обработчика результат не появится.
+window.addEventListener('hashchange',()=>{if(location.hash.startsWith('#d='))openShared()});
