@@ -63,3 +63,16 @@ test('в ссылку кладётся всё, что нужно карточк�
   const text = reportText(slim(full));
   assert.ok(!/undefined|NaN/.test(text), `текстовый отчёт из ссылки: ${text}`);
 });
+
+test('ссылка с локальной версии ведёт на прод, а не на localhost', async () => {
+  const {siteFrom} = await import('../app/share.js');
+  const prod = 'https://retorta.tracedocs.ru/';
+  assert.equal(siteFrom('http://localhost:8000', 'localhost', prod), 'https://retorta.tracedocs.ru');
+  assert.equal(siteFrom('http://127.0.0.1:8000', '127.0.0.1', prod), 'https://retorta.tracedocs.ru');
+  // на проде адрес берётся как есть
+  assert.equal(siteFrom('https://retorta.tracedocs.ru', 'retorta.tracedocs.ru', prod), 'https://retorta.tracedocs.ru');
+  // другой домен важнее канонического: сайт мог переехать
+  assert.equal(siteFrom('https://tgwrapped.ru', 'tgwrapped.ru', prod), 'https://tgwrapped.ru');
+  // без canonical локальный адрес остаётся собой — лучше так, чем ссылка в никуда
+  assert.equal(siteFrom('http://localhost:8000', 'localhost', ''), 'http://localhost:8000');
+});

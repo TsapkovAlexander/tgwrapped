@@ -4,10 +4,19 @@ import {fm,pct,np,plural,DAY,MSG,CALL,TALK} from './format.js';
 import {titles} from './render.js';
 
 const W=1080,H=1920;
-// Куда идти тому, кому прислали карточки: туда, где открыт сайт сейчас.
-// Домен у проекта может смениться, а ссылка в чужом чате должна остаться живой.
-export const SITE=typeof location!=='undefined'&&location.origin.startsWith('http')
-  ? location.origin : 'https://tgwrapped.ru';
+// Куда идти тому, кому прислали карточки. Обычно — туда, где открыт сайт,
+// но с localhost такая ссылка бесполезна: у получателя она никуда не ведёт.
+// Поэтому для локальной версии берём канонический адрес из разметки.
+export function siteFrom(origin,hostname,canonical){
+  const local=/^(localhost|127\.|0\.0\.0\.0|\[?::1)/.test(hostname||'')||!/^https?:/.test(origin||'');
+  const c=(canonical||'').replace(/\/+$/,'');
+  return local&&/^https?:\/\//.test(c) ? c : origin;
+}
+const canonical=()=>typeof document==='undefined' ? '' :
+  (document.querySelector('link[rel=canonical]')?.href
+   ||document.querySelector('meta[property="og:url"]')?.content||'');
+export const SITE=typeof location==='undefined' ? 'https://tgwrapped.ru'
+  : siteFrom(location.origin,location.hostname,canonical());
 const count=()=>document.querySelectorAll('#exportScope .slide').length||8;
 // Лист собирается сеткой, а не полосой: Telegram отправляет картинку фотографией,
 // только если сумма сторон не больше 10 000 px — полоса ушла бы документом, без превью.
@@ -126,7 +135,7 @@ export const TG_LIMIT=3500;
 export async function buildLink(S){
   const raw=new TextEncoder().encode(JSON.stringify(slim(S)));
   const packed='CompressionStream'in window?'z'+b64(await pipe(raw,new CompressionStream('gzip'))):'r'+b64(raw);
-  return location.origin+location.pathname+'#d='+packed;
+  return SITE+location.pathname+'#d='+packed;
 }
 export async function readLink(){
   const m=location.hash.match(/^#d=(.+)$/);if(!m)return null;
