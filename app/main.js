@@ -2,7 +2,7 @@
 import {analyze} from './stats.js';
 import {np,DAY,MSG} from './format.js';
 import {buildSlides} from './render.js';
-import {slideBlob,saveBlob,prepareAlbum,prepareSheet,sendFiles,reportText,copyText,buildLink,readLink,tgShareUrl,TG_LIMIT} from './share.js';
+import {slideBlob,saveBlob,prepareAlbum,prepareSheet,sendFiles,willShare,reportText,copyText,buildLink,readLink,tgShareUrl,TG_LIMIT} from './share.js';
 
 const $=s=>document.querySelector(s);
 let DATA=null,S=null,SLIDES=[],i=0;
@@ -136,10 +136,10 @@ function resetSend(){
 }
 $('#optAlbum').onclick=()=>busy(async()=>{sheet(false);say(`Рисую ${SLIDES.length} карточек, это около 20 секунд…`);
   const files=await withExportScope(mount=>prepareAlbum(step,SLIDES.length,mount));
-  offerSend(files,`Отправить ${files.length} карточек`)});
+  offerSend(files,willShare(files)?`Отправить ${files.length} карточек`:`Скачать ${files.length} карточек`)});
 $('#optSheet').onclick=()=>busy(async()=>{sheet(false);say('Собираю картинку из всех карточек, это около 20 секунд…');
   const files=await withExportScope(mount=>prepareSheet(step,SLIDES.length,mount));
-  offerSend(files,'Отправить картинку')});
+  offerSend(files,willShare(files)?'Отправить картинку':'Скачать картинку')});
 $('#optText').onclick=()=>busy(async()=>{sheet(false);
   say(await copyText(reportText(S))?'Текст в буфере — вставьте в чат':'Буфер недоступен, выделите текст вручную')});
 $('#optLink').onclick=()=>busy(async()=>{sheet(false);

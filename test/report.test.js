@@ -92,15 +92,20 @@ test('упакованный слепок разворачивается обр�
     assert.ok(!/undefined|NaN/.test(html), `карточка ${i + 1}: undefined или NaN`));
 });
 
-test('файлы уходят через системное окно только на телефоне', async () => {
+test('файлы отправляются системным окном, если браузер это умеет', async () => {
   const {canShareFiles} = await import('../app/share.js');
-  const withShare = {share(){}, canShare(){return true}};
-  // десктоп: браузер передаёт приложению пути к временным файлам вместо картинок
-  assert.equal(canShareFiles({...withShare, userAgentData:{mobile:false}}, false), false);
-  assert.equal(canShareFiles(withShare, false), false, 'без userAgentData решает тип указателя');
-  // телефон
-  assert.equal(canShareFiles({...withShare, userAgentData:{mobile:true}}, false), true);
-  assert.equal(canShareFiles(withShare, true), true);
-  // браузер вообще без Web Share
-  assert.equal(canShareFiles({}, true), false);
+  const files = [{name: 'wrapped_1.png'}];
+  assert.equal(canShareFiles({share(){}, canShare: () => true}, files), true);
+  assert.equal(canShareFiles({share(){}, canShare: () => false}, files), false, 'браузер не берёт файлы — надо сохранять');
+  assert.equal(canShareFiles({share(){}}, files), false, 'без canShare проверить нечем');
+  assert.equal(canShareFiles({}, files), false, 'без Web Share вообще');
+  assert.equal(canShareFiles(null, files), false);
+});
+
+test('вместе с файлами не отправляются text и url', async () => {
+  const src = (await import('node:fs')).readFileSync('app/share.js', 'utf8');
+  const call = src.match(/navigator\.share\(\{files[^)]*\)/);
+  assert.ok(call, 'вызов navigator.share с файлами не найден');
+  assert.ok(!/text:|url:/.test(call[0]),
+    `с файлами уходят лишние поля, браузер отдаст пути вместо картинок: ${call[0]}`);
 });

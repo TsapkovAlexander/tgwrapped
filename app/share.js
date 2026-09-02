@@ -66,14 +66,15 @@ export async function prepareSheet(step,n=count(),prepare){
 // Вызывать строго из обработчика клика: иначе браузер откажет —
 // «Must be handling a user gesture to perform a share request».
 export async function sendFiles(files){
-  if(mobileNow()&&navigator.canShare?.({files})){
-    await navigator.share({files,title:'Telegram Wrapped',
-      text:`Наша переписка в цифрах — свой отчёт: ${SITE}`});
+  if(canShareFiles(typeof navigator!=='undefined'?navigator:null,files)){
+    await navigator.share({files,title:'Telegram Wrapped'});
     return 'share';
   }
   for(const f of files)saveBlob(f,f.name);
   return 'save';
 }
+// Чем закончится нажатие — от этого зависит, как назвать кнопку.
+export const willShare=files=>canShareFiles(typeof navigator!=='undefined'?navigator:null,files);
 
 
 // Текстовый отчёт: читается без картинок, цитируется в чате.
@@ -163,16 +164,12 @@ const unpack=arr=>{const o={};
 // длиннее — Telegram открывать не пробуем, ссылка и так лежит в буфере.
 export const TG_LIMIT=3500;
 
-// Отдавать файлы через navigator.share стоит только на телефоне. На десктопе
-// браузер передаёт приложению не сами картинки, а пути к временным файлам,
-// и в чат уезжает список вида /Users/.../wrapped_1.png вместо альбома.
-export function canShareFiles(nav,coarsePointer){
-  if(!nav||typeof nav.share!=='function')return false;
-  const mobile=nav.userAgentData?nav.userAgentData.mobile:coarsePointer;
-  return !!mobile;
+// Файлы отдаём БЕЗ text и url. С ними браузер не может передать приложению
+// картинки и деградирует до текстового сообщения: в чат приезжает
+// «/Users/…/wrapped_1.png» списком вместо альбома.
+export function canShareFiles(nav,files){
+  return !!(nav&&typeof nav.share==='function'&&nav.canShare&&nav.canShare({files}));
 }
-const mobileNow=()=>canShareFiles(typeof navigator!=='undefined'?navigator:null,
-  typeof matchMedia!=='undefined'&&matchMedia('(pointer:coarse)').matches);
 
 export async function buildLink(S){
   const raw=new TextEncoder().encode(JSON.stringify(pack(S)));

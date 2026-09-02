@@ -1,6 +1,6 @@
 {
   "name": "tgwrapped",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "private": true,
   "description": "Telegram Wrapped: JSON-экспорт личного чата превращается в 8 карточек прямо в браузере",
   "scripts": {
