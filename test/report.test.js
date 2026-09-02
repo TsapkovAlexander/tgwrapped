@@ -50,3 +50,16 @@ test('дробные числа в вердикте пишутся через з
   const all=T.A.text+' '+T.M.text+' '+T.chat;
   assert.ok(!/\d\.\d/.test(all),`дробь через точку: ${all.match(/[^ ]*\d\.\d[^ ]*/)}`);
 });
+
+test('в ссылку кладётся всё, что нужно карточкам', async () => {
+  const {slim} = await import('../app/share.js');
+  const full = S();
+  const cards = buildSlides(slim(full));
+  assert.equal(cards.length, buildSlides(full).length, 'из урезанных данных вышло другое число карточек');
+  cards.forEach(([, html], i) => {
+    assert.ok(!/undefined|NaN/.test(html), `карточка ${i + 1} из ссылки содержит undefined или NaN`);
+  });
+  const {reportText} = await import('../app/share.js');
+  const text = reportText(slim(full));
+  assert.ok(!/undefined|NaN/.test(text), `текстовый отчёт из ссылки: ${text}`);
+});

@@ -95,8 +95,36 @@ const b64=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode
 const unb64=s=>{const t=atob(s.replace(/-/g,'+').replace(/_/g,'/'));const u=new Uint8Array(t.length);for(let i=0;i<t.length;i++)u[i]=t.charCodeAt(i);return u};
 const pipe=async(u8,s)=>new Uint8Array(await new Response(new Blob([u8]).stream().pipeThrough(s)).arrayBuffer());
 
+// В ссылку кладём только то, что рисуют карточки: t.me/share/url отвечает 400
+// на слишком длинный адрес, а половину слепка (помесячные ряды, разбивки по годам)
+// карточки не открывают вовсе.
+const KEEP=['names','total','days','active_days','first','last','per_user','words','vocab',
+ 'calls','resp_median','resp_p90','unanswered','pingpong','night','weekend','hours',
+ 'first_hour','last_hour','deep_night','wd','wd_top','kw','edited','voice','voice_secs',
+ 'quotes','replies','reactions_by','max_monologue','signature','top_words','domains',
+ 'emoji','reactions','stickers','starts','ends','double','answered','sessions','sess_median',
+ 'longest_session','streak','pauses','top_days','month_top','month_low','day_first','day_last',
+ 'first_msg','last_msg','long_msgs'];
+const CUT={top_words:8,signature:6,domains:6,reactions:4,pauses:1,top_days:1};
+export function slim(S){
+  const out={};
+  for(const k of KEEP){
+    if(!(k in S))continue;
+    let v=S[k];
+    if(CUT[k]&&Array.isArray(v))v=v.slice(0,CUT[k]);
+    else if(CUT[k]&&v&&typeof v==='object')v=Object.fromEntries(Object.entries(v).map(([kk,vv])=>[kk,Array.isArray(vv)?vv.slice(0,CUT[k]):vv]));
+    out[k]=v;
+  }
+  if(out.emoji)out.emoji={A:(out.emoji.A||[]).slice(0,3),M:(out.emoji.M||[]).slice(0,3)};
+  return out;
+}
+
+// t.me/share/url отвечает 400 на длинный запрос. Порог с запасом:
+// длиннее — Telegram открывать не пробуем, ссылка и так лежит в буфере.
+export const TG_LIMIT=3500;
+
 export async function buildLink(S){
-  const raw=new TextEncoder().encode(JSON.stringify(S));
+  const raw=new TextEncoder().encode(JSON.stringify(slim(S)));
   const packed='CompressionStream'in window?'z'+b64(await pipe(raw,new CompressionStream('gzip'))):'r'+b64(raw);
   return location.origin+location.pathname+'#d='+packed;
 }

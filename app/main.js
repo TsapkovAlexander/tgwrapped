@@ -2,7 +2,7 @@
 import {analyze} from './stats.js';
 import {np,DAY,MSG} from './format.js';
 import {buildSlides} from './render.js';
-import {slideBlob,saveBlob,shareAlbum,shareSheet,reportText,copyText,buildLink,readLink,tgShareUrl} from './share.js';
+import {slideBlob,saveBlob,shareAlbum,shareSheet,reportText,copyText,buildLink,readLink,tgShareUrl,TG_LIMIT} from './share.js';
 
 const $=s=>document.querySelector(s);
 let DATA=null,S=null,SLIDES=[],i=0;
@@ -121,8 +121,16 @@ $('#optText').onclick=()=>busy(async()=>{sheet(false);
 $('#optLink').onclick=()=>busy(async()=>{sheet(false);
   const url=await buildLink(S);
   const ok=await copyText(url);
-  window.open(tgShareUrl(url,`${S.names.A} и ${S.names.M}: ${np(S.total,MSG)} за ${np(S.days,DAY)}`),'_blank','noopener');
-  say(ok?'Ссылка скопирована, Telegram открыт в новой вкладке':'Telegram открыт в новой вкладке')});
+  const share=tgShareUrl(url,`${S.names.A} и ${S.names.M}: ${np(S.total,MSG)} за ${np(S.days,DAY)}`);
+  // На длинный адрес окно Telegram отвечает ошибкой, поэтому его просто не открываем:
+  // ссылка уже в буфере, её достаточно вставить в чат руками.
+  if(share.length<=TG_LIMIT){
+    window.open(share,'_blank','noopener');
+    say(ok?'Ссылка скопирована, Telegram открыт в новой вкладке':'Telegram открыт в новой вкладке');
+  }else{
+    say(ok?'Ссылка скопирована — вставьте её в чат'
+          :'Ссылка слишком длинная для окна Telegram, а буфер недоступен: сохраните карточки картинкой');
+  }});
 
 $('#restart').onclick=()=>{location.hash='';location.reload()};
 
